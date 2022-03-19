@@ -25,8 +25,9 @@ class User(AbstractUser):
         blank=True,
         verbose_name='Фамилия'
     )
-    telephone_number = models.EmailField(
-        max_length=50,
+    telephone_number = models.CharField(
+        max_length=11,
+        blank=True,
         unique=True,
         verbose_name='номер телефона'
     )
