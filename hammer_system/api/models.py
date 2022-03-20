@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+import random
+
+from django.conf import settings
 
 
 class User(AbstractUser):
@@ -9,11 +12,6 @@ class User(AbstractUser):
         blank=False,
         null=False,
         verbose_name='Псевдоним'
-    )
-    email = models.EmailField(
-        max_length=50,
-        unique=True,
-        verbose_name='Адрес почты'
     )
     first_name = models.CharField(
         max_length=30,
@@ -34,3 +32,13 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'telephone_number'
     REQUIRED_FIELDS = ('username',)
+
+
+
+def generate_activation_code():
+    return ''.join([random.choice(list('123456789')) for x in range(4)])
+
+
+class ActivationCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    code = models.CharField(max_length=4, default=generate_activation_code)
