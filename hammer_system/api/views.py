@@ -6,7 +6,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 
-from .serializers import UserSerializer, TokenSerializer
+from .serializers import UserSerializer, TokenSerializer, UsersSerializer
 from api.models import ActivationCode, User, InviteCode
 from .exseptions import CodeDoesNotExist
 
@@ -43,3 +43,23 @@ def check_activation_code(request):
     InviteCode.objects.get_or_create(user=user)
     invite = InviteCode.objects.get(user=user)
     return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite.invite_code)}, status=status.HTTP_200_OK)
+
+
+class UsersViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UsersSerializer
+    lookup_field = 'username'
+    @action(detail=False, methods=['get', 'patch'],
+            permission_classes=[IsAuthenticated])
+    def me(self, request):
+        """API для получения и редактирования
+        текущим пользователем своих данных"""
+        user = request.user
+        if request.method == 'GET':
+            serializer = self.get_serializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(role=user.role, partial=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

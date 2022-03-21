@@ -1,8 +1,10 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from api.views import get_confirmation_code, check_activation_code
+from api.views import get_confirmation_code, check_activation_code, UsersViewSet
 
 router_v1 = DefaultRouter()
+
+router_v1.register(r'users', UsersViewSet, basename='users')
 
 app_name = 'app'
 
