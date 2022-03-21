@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import random
+import string
 
 from django.conf import settings
 
@@ -33,7 +34,6 @@ class User(AbstractUser):
     REQUIRED_FIELDS = ('username',)
 
 
-
 def generate_activation_code():
     return ''.join([random.choice(list('123456789')) for x in range(4)])
 
@@ -41,3 +41,22 @@ def generate_activation_code():
 class ActivationCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     code = models.CharField(max_length=4, default=generate_activation_code)
+
+
+def generate_invite_code():
+    return ''.join([random.choice(list(string.ascii_uppercase + string.digits)) for x in range(6)])
+
+
+
+
+class InviteCode(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Псевдоним'
+    )
+    invite_code = models.CharField(
+        max_length=6,
+        default=generate_invite_code,
+        verbose_name='код приглашения'
+    )

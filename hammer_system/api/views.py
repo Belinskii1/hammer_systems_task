@@ -7,14 +7,14 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.tokens import default_token_generator
 
 from .serializers import UserSerializer, TokenSerializer
-from api.models import ActivationCode, User
+from api.models import ActivationCode, User, InviteCode
 from .exseptions import CodeDoesNotExist
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def get_confirmation_code(request):
-    """API создает пользователя и отправляет код подверждения=токен"""
+    """API создает пользователя и отправляет код на вход"""
     serializer = UserSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     username = serializer.data.get('username')
@@ -28,6 +28,7 @@ def get_confirmation_code(request):
 @api_view(['POST', 'DELETE'])
 @permission_classes([AllowAny])
 def check_activation_code(request):
+    """API проверяет код и присваивает токен"""
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     code = get_object_or_404(
@@ -39,4 +40,6 @@ def check_activation_code(request):
     user = code.user
     code.delete()
     token = default_token_generator.make_token(user)
-    return Response({'Ваш токен': str(token)}, status=status.HTTP_200_OK)
+    InviteCode.objects.get_or_create(user=user)
+    invite = InviteCode.objects.get(user=user)
+    return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite.invite_code)}, status=status.HTTP_200_OK)
