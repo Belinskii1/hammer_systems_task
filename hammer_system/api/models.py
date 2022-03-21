@@ -8,7 +8,6 @@ from django.conf import settings
 class User(AbstractUser):
     username = models.CharField(
         max_length=25,
-        unique=True,
         blank=False,
         null=False,
         verbose_name='Псевдоним'
