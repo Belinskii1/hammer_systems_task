@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -131,12 +130,11 @@ AUTH_USER_MODEL = 'api.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated', 
+        'rest_framework.permissions.AllowAny', 
     ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ]
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
 }
 
 SIMPLE_JWT = {

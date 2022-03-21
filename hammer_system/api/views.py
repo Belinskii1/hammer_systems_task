@@ -50,7 +50,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
     lookup_field = 'username'
     @action(detail=False, methods=['get', 'patch'],
-            permission_classes=[IsAuthenticated])
+            permission_classes=[AllowAny])
     def me(self, request):
         """API для получения и редактирования
         текущим пользователем своих данных"""

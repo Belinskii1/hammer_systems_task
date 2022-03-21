@@ -47,8 +47,6 @@ def generate_invite_code():
     return ''.join([random.choice(list(string.ascii_uppercase + string.digits)) for x in range(6)])
 
 
-
-
 class InviteCode(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
