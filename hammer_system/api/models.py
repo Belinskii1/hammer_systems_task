@@ -46,14 +46,16 @@ class User(AbstractUser):
         unique=True,
         verbose_name='номер телефона'
     )
-    invite_code = models.ForeignKey(
-        InviteCode,
-        related_name='Invite_code',
-        on_delete=models.CASCADE
+    invite_code = models.CharField(
+        max_length=11,
+        blank=True,
+        verbose_name='пригласительный код'
     )
     invite_code_incerted = models.ManyToManyField(
         InviteCode,
-        through='InviteCodeincerted')
+        through='InviteCodeincerted'
+    )
+
 
     USERNAME_FIELD = 'telephone_number'
     REQUIRED_FIELDS = ('username',)

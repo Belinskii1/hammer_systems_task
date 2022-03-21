@@ -31,7 +31,7 @@ class UsersSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'username',
-            'telephone_number'
+            'telephone_number',
             'invite_code',
             'invite_code_incerted'
         )

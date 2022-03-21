@@ -42,7 +42,11 @@ def check_activation_code(request):
     token = default_token_generator.make_token(user)
     InviteCode.objects.get_or_create(owner=user)
     invite = InviteCode.objects.get(owner=user)
-    return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite.invite_code)}, status=status.HTTP_200_OK)
+    invite = str(invite.invite_code)
+    user = User.objects.get(telephone_number=user)
+    user.invite_code = invite
+    user.save()
+    return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite)}, status=status.HTTP_200_OK)
 
 
 class UsersViewSet(viewsets.ModelViewSet):
