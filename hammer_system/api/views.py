@@ -40,15 +40,15 @@ def check_activation_code(request):
     user = code.user
     code.delete()
     token = default_token_generator.make_token(user)
-    InviteCode.objects.get_or_create(user=user)
-    invite = InviteCode.objects.get(user=user)
+    InviteCode.objects.get_or_create(owner=user)
+    invite = InviteCode.objects.get(owner=user)
     return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite.invite_code)}, status=status.HTTP_200_OK)
 
 
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
-    lookup_field = 'username'
+    lookup_field = 'telephone_number'
     @action(detail=False, methods=['get', 'patch'],
             permission_classes=[AllowAny])
     def me(self, request):
@@ -58,8 +58,6 @@ class UsersViewSet(viewsets.ModelViewSet):
         if request.method == 'GET':
             serializer = self.get_serializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-
         serializer = self.get_serializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save(role=user.role, partial=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

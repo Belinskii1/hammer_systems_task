@@ -6,6 +6,23 @@ import string
 from django.conf import settings
 
 
+def generate_invite_code():
+    return ''.join([random.choice(list(string.ascii_uppercase + string.digits)) for x in range(6)])
+
+
+class InviteCode(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Псевдоним'
+    )
+    invite_code = models.CharField(
+        max_length=6,
+        default=generate_invite_code,
+        verbose_name='код приглашения'
+    )
+
+
 class User(AbstractUser):
     username = models.CharField(
         max_length=25,
@@ -29,9 +46,22 @@ class User(AbstractUser):
         unique=True,
         verbose_name='номер телефона'
     )
+    invite_code = models.ForeignKey(
+        InviteCode,
+        related_name='Invite_code',
+        on_delete=models.CASCADE
+    )
+    invite_code_incerted = models.ManyToManyField(
+        InviteCode,
+        through='InviteCodeincerted')
 
     USERNAME_FIELD = 'telephone_number'
     REQUIRED_FIELDS = ('username',)
+
+
+class InviteCodeincerted(models.Model):
+    invite_code = models.ForeignKey(InviteCode, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 def generate_activation_code():
@@ -41,20 +71,3 @@ def generate_activation_code():
 class ActivationCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     code = models.CharField(max_length=4, default=generate_activation_code)
-
-
-def generate_invite_code():
-    return ''.join([random.choice(list(string.ascii_uppercase + string.digits)) for x in range(6)])
-
-
-class InviteCode(models.Model):
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        verbose_name='Псевдоним'
-    )
-    invite_code = models.CharField(
-        max_length=6,
-        default=generate_invite_code,
-        verbose_name='код приглашения'
-    )
