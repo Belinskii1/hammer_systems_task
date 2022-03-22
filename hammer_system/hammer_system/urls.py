@@ -35,7 +35,7 @@ schema_view = get_schema_view(
       description="Документация для приложения api hammer systems",
 
       contact=openapi.Contact(email="belinksi1@yandex.ru"),
-      license=openapi.License(name="BSD License"),
+      license=openapi.License(name="MIT License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
