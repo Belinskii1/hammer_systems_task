@@ -8,7 +8,6 @@ from django.contrib.auth.tokens import default_token_generator
 
 from .serializers import UserSerializer, TokenSerializer, UsersSerializer
 from api.models import ActivationCode, User, InviteCode
-from .exseptions import CodeDoesNotExist
 
 
 @api_view(['POST'])
@@ -39,11 +38,11 @@ def check_activation_code(request):
         return Response("код не существует")
     user = code.user
     code.delete()
-    token = default_token_generator.make_token(user)
     InviteCode.objects.get_or_create(owner=user)
     invite = InviteCode.objects.get(owner=user)
     invite = str(invite.invite_code)
     user = User.objects.get(telephone_number=user)
+    token = default_token_generator.make_token(user)
     user.invite_code = invite
     user.save()
     return Response({'Ваш токен': str(token), 'Ваш инвайт код': str(invite)}, status=status.HTTP_200_OK)
@@ -54,7 +53,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UsersSerializer
     lookup_field = 'telephone_number'
     @action(detail=False, methods=['get', 'patch'],
-            permission_classes=[AllowAny])
+            permission_classes=[AllowAny])  # для тестов все ограничения сняты
     def me(self, request):
         """API для получения и редактирования
         текущим пользователем своих данных"""
