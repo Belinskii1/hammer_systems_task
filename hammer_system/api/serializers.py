@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import User, ActivationCode, InviteCode
+from api.models import User, InviteCode
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class InviteCodeSerializer(serializers.ModelSerializer):
 
 
 class UsersSerializer(serializers.ModelSerializer):
-    invite_code_incerted = InviteCodeSerializer(many=True)
+    invite_code_list = InviteCodeSerializer(many=True)
 
     class Meta:
         model = User
@@ -33,5 +33,5 @@ class UsersSerializer(serializers.ModelSerializer):
             'username',
             'telephone_number',
             'invite_code',
-            'invite_code_incerted'
+            'invite_code_list'
         )

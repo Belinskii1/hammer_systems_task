@@ -14,7 +14,7 @@ class InviteCode(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        verbose_name='Псевдоним'
+        verbose_name='владелец кода'
     )
     invite_code = models.CharField(
         max_length=6,
@@ -51,7 +51,12 @@ class User(AbstractUser):
         blank=True,
         verbose_name='пригласительный код'
     )
-    invite_code_incerted = models.ManyToManyField(
+    invite_code_incerd = models.CharField(
+        max_length=11,
+        blank=True,
+        verbose_name='введенный пригласительный код'
+    )
+    invite_code_list = models.ManyToManyField(
         InviteCode,
         through='InviteCodeincerted'
     )
